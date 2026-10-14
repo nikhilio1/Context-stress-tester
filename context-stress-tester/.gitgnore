@@ -1,0 +1,29 @@
+# Environment variables and secrets -- NEVER commit API keys
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv/
+
+# Generated haystack documents -- large, regenerable from data/sources/
+data/haystacks/*.txt
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Jupyter (if you experiment in notebooks)
+.ipynb_checkpoints/

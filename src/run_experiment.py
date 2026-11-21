@@ -38,6 +38,7 @@ FIELDNAMES = [
     "latency_sec",
     "prompt_tokens",
     "completion_tokens",
+    "status", "error_message"
 ]
 
 
@@ -56,11 +57,41 @@ def append_result(row: dict):
             writer.writeheader()
         writer.writerow(row)
 
+import time
+import openai
+
+RETRYABLE = (
+    openai.RateLimitError,
+    openai.InternalServerError,
+    openai.APIConnectionError,  # also covers timeouts
+)
+WAITS = [5, 15, 30, 60]  # seconds to wait before retry 1, 2, 3, 4
+
+
+def query_with_retry(model, text, question):
+    for attempt in range(len(WAITS) + 1):
+        try:
+            return query_model(model, text, question)
+        except RETRYABLE as e:
+            if attempt == len(WAITS):
+                raise  # out of retries, let the except block mark it as error
+            wait = WAITS[attempt]
+            print(f"Retry {attempt + 1}/{len(WAITS)} after {type(e).__name__}, waiting {wait}s")
+            time.sleep(wait)
+        
+def pause_after(prompt_tokens):
+    # Keep under 15 requests/min and 250K tokens/min
+    if prompt_tokens >= 80000:
+        time.sleep(45)
+    elif prompt_tokens >= 30000:
+        time.sleep(15)
+    else:
+        time.sleep(5)
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--models", nargs="+", required=True, help="Model labels from model_clients.MODEL_REGISTRY")
-    parser.add_argument("--lengths", nargs="+", type=int, default=[1000, 10000, 50000])
+    parser.add_argument("--lengths", nargs="+", type=int, default=[10000, 50000, 100000])
     parser.add_argument("--depths", nargs="+", type=float, default=[0, 25, 50, 75, 100])
     parser.add_argument("--trials", type=int, default=1, help="Repeats per cell, for reliability")
     parser.add_argument("--sources", default="data/sources")
@@ -82,13 +113,19 @@ def main():
         full_text, _ = insert_needle(haystack, needle_info["needle"], depth)
 
         try:
-            answer, latency, usage = query_model(model, full_text, needle_info["question"])
+            answer, latency, usage = query_with_retry(model, full_text, needle_info["question"])
             correct = grade(answer, needle_info["answer"])
+            status = "OK"
+            error_message = ""
+            
         except Exception as e:
-            answer = f"ERROR: {e}"
+            print(f"ERROR: {e}")
+            answer = ""
             latency = 0.0
             usage = {"prompt_tokens": 0, "completion_tokens": 0}
-            correct = False
+            correct = None
+            status = "ERROR"
+            error_message = str(e)
 
         append_result({
             "model": model,
@@ -98,13 +135,15 @@ def main():
             "needle_question": needle_info["question"],
             "expected_answer": needle_info["answer"],
             "model_answer": answer,
+            "status": status,
+            "error_message": error_message,
             "correct": correct,
             "latency_sec": round(latency, 3),
             "prompt_tokens": usage.get("prompt_tokens", 0),
             "completion_tokens": usage.get("completion_tokens", 0),
         })
 
-        time.sleep(0.5)  # be polite to rate limits
+        pause_after(usage.get("prompt_tokens", 0))# be polite to rate limits
 
     print(f"\nDone. Results appended to {RESULTS_PATH}")
 

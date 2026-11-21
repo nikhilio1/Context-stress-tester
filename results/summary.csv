@@ -1,5 +1,2 @@
 model,length_tokens,accuracy,avg_latency,avg_prompt_tokens
-gpt-oss-120b,1000,1.0,5.048,1157.5
-gpt-oss-120b,3000,1.0,22.0856,3148.5
-gpt-oss-120b,5000,1.0,35.095299999999995,5142.5
-gpt-oss-120b,7000,1.0,46.709500000000006,7133.5
+gemini-3.5-flash-lite,1000,1.0,1.46,1082.0

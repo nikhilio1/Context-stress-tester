@@ -74,14 +74,15 @@ def _query_anthropic(model: str, document: str, question: str) -> tuple[str, flo
     return answer, latency, usage
 
 
-def _query_groq(model: str, document: str, question: str) -> tuple[str, float, dict]:
-    # Groq's API is OpenAI-compatible, so we reuse the openai SDK pointed at
-    # Groq's base URL. Good for testing a free/open model like Llama.
+def _query_gemini(model: str, document: str, question: str) -> tuple[str, float, dict]:
+    # Gemini free tier, via its OpenAI-compatible endpoint.
     from openai import OpenAI
 
     client = OpenAI(
-        api_key=os.environ["GROQ_API_KEY"],
-        base_url="https://api.groq.com/openai/v1",
+        api_key=os.environ["GEMINI_API_KEY"],
+        base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+        timeout=60,
+        max_retries=0,
     )
     user_prompt = f"<document>\n{document}\n</document>\n\nQuestion: {question}"
 
@@ -93,6 +94,7 @@ def _query_groq(model: str, document: str, question: str) -> tuple[str, float, d
             {"role": "user", "content": user_prompt},
         ],
         temperature=0,
+        reasoning_effort="low",  # "minimal" is too weak, "high" is too slow
     )
     latency = time.time() - start
 
@@ -115,7 +117,7 @@ MODEL_REGISTRY = {
     "gpt-4o-mini": (_query_openai, "gpt-4o-mini"),
     "claude-sonnet": (_query_anthropic, "claude-sonnet-5"),
     "claude-haiku": (_query_anthropic, "claude-haiku-5-5"),
-    "gpt-oss-120b": (_query_groq, "openai/gpt-oss-120b"),
+    "gemini-3.5-flash-lite": (_query_gemini, "gemini-flash-3.5-lite"),
 }
 
 

@@ -25,8 +25,17 @@ OUT_DIR = "results"
 def load_results() -> pd.DataFrame:
     if not os.path.exists(RESULTS_PATH):
         raise FileNotFoundError(f"{RESULTS_PATH} not found -- run run_experiment.py first.")
+        
     df = pd.read_csv(RESULTS_PATH)
-    df["correct"] = df["correct"].astype(bool)
+    # Old files may have no status column; treat those rows as valid.
+    if "status" not in df.columns:
+        df["status"] = "OK"
+
+    # Keep only requests that actually worked, BEFORE touching "correct".
+    df = df[df["status"] == "OK"].copy()
+
+    # Safe conversion: only the text "True" counts as correct.
+    df["correct"] = df["correct"].astype(str).str.lower() == "true"
     return df
 
 

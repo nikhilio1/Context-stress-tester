@@ -17,20 +17,81 @@ import tiktoken
 # specific, unambiguous, and NOT something the model could guess without
 # actually reading it.
 DEFAULT_NEEDLES = [
+    # --- baseline (your original 3) ---
     {
+        "type": "baseline",
         "needle": "The secret launch code for Project Aurora is 48291.",
         "question": "What is the secret launch code for Project Aurora?",
         "answer": "48291",
     },
     {
+        "type": "baseline",
         "needle": "The hidden meeting room for the quarterly budget review is Room Zebra-7.",
         "question": "Which room is the quarterly budget review held in?",
         "answer": "Zebra-7",
     },
     {
+        "type": "baseline",
         "needle": "The backup server's root password was temporarily set to 'Tangerine-Moose-19'.",
         "question": "What was the backup server's root password temporarily set to?",
         "answer": "Tangerine-Moose-19",
+    },
+    # --- blended in: reads like the surrounding encyclopedia text ---
+    {
+        "type": "blended",
+        "needle": "The Valmora Accord was negotiated in the harbour town of Quenby-on-Tarn, where the delegates met over three weeks.",
+        "question": "In which town was the Valmora Accord negotiated?",
+        "answer": "Quenby-on-Tarn",
+    },
+    {
+        "type": "blended",
+        "needle": "The Drennick Expedition of 1831 was led by a cartographer named Ostrel Havenmoor, who charted the northern estuaries.",
+        "question": "Who led the Drennick Expedition?",
+        "answer": "Ostrel Havenmoor",
+    },
+    {
+        "type": "blended",
+        "needle": "The Brightwater Canal, completed after eleven years of construction, was financed chiefly by the Marlowe-Dessin Trading Company.",
+        "question": "Which company mainly financed the Brightwater Canal?",
+        "answer": "Marlowe-Dessin",
+    },
+    # --- look-alike distractors: three similar facts, one question ---
+    {
+        "type": "distractor",
+        "needle": "The access code for the north vault is 61304. The access code for the east vault is 77215. The access code for the south vault is 38860.",
+        "question": "What is the access code for the east vault?",
+        "answer": "77215",
+    },
+    {
+        "type": "distractor",
+        "needle": "Engineer Pria Kolvane moved to Karvenna in March. Engineer Tomas Ruiz moved to Dunmoor in June. Engineer Wen Adeyemi moved to Pellisford in September.",
+        "question": "Which city did Tomas Ruiz move to?",
+        "answer": "Dunmoor",
+    },
+    {
+        "type": "distractor",
+        "needle": "Server Alpha-3 is reserved for the project named Cobalt-Finch. Server Alpha-5 is reserved for the project named Maple-Quartz. Server Alpha-8 is reserved for the project named Ember-Lotus.",
+        "question": "Which project is Server Alpha-5 reserved for?",
+        "answer": "Maple-Quartz",
+    },
+    # --- reworded question: almost no shared words with the fact ---
+    {
+        "type": "reworded",
+        "needle": "The finance team's weekly sync takes place in the Pelican Annex.",
+        "question": "Where do the people who handle the budget meet each week?",
+        "answer": "Pelican Annex",
+    },
+    {
+        "type": "reworded",
+        "needle": "Every Thursday, the night watchman at the Harrow Street depot feeds the stray heron he calls Bartholomew Quill.",
+        "question": "What name does the depot's night guard give to the bird he looks after?",
+        "answer": "Bartholomew Quill",
+    },
+    {
+        "type": "reworded",
+        "needle": "The cafeteria's special soup this season is a smoked-fig bisque, which the staff nicknamed 'Plum Thunder'.",
+        "question": "What nickname did employees give the seasonal dish served at lunch?",
+        "answer": "Plum Thunder",
     },
 ]
 

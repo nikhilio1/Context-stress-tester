@@ -117,7 +117,7 @@ MODEL_REGISTRY = {
     "gpt-4o-mini": (_query_openai, "gpt-4o-mini"),
     "claude-sonnet": (_query_anthropic, "claude-sonnet-5"),
     "claude-haiku": (_query_anthropic, "claude-haiku-5-5"),
-    "gemini-3.5-flash-lite": (_query_gemini, "gemini-flash-3.5-lite"),
+    "gemini-3.5-flash-lite": (_query_gemini, "gemini-3.5-flash-lite"),
 }
 
 

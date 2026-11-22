@@ -38,7 +38,7 @@ FIELDNAMES = [
     "latency_sec",
     "prompt_tokens",
     "completion_tokens",
-    "status", "error_message"
+    "status", "error_message", "needle_type"
 ]
 
 
@@ -76,12 +76,14 @@ def query_with_retry(model, text, question):
             if attempt == len(WAITS):
                 raise  # out of retries, let the except block mark it as error
             wait = WAITS[attempt]
-            print(f"Retry {attempt + 1}/{len(WAITS)} after {type(e).__name__}, waiting {wait}s")
+            print(f"Retry {attempt + 1}/{len(WAITS)} after {type(e).__name__}: {getattr(e, 'body', e)}, waiting {wait}s")
             time.sleep(wait)
         
 def pause_after(prompt_tokens):
     # Keep under 15 requests/min and 250K tokens/min
-    if prompt_tokens >= 80000:
+    if prompt_tokens >= 150000:
+        time.sleep(60)
+    elif prompt_tokens >= 80000:
         time.sleep(45)
     elif prompt_tokens >= 30000:
         time.sleep(15)
@@ -125,7 +127,7 @@ def main():
             usage = {"prompt_tokens": 0, "completion_tokens": 0}
             correct = None
             status = "ERROR"
-            error_message = str(e)
+            error_message = f"{type(e).__name__}: {e} | status={getattr(e, 'status_code', None)} | body={getattr(e, 'body', None)}"
 
         append_result({
             "model": model,
@@ -134,6 +136,7 @@ def main():
             "trial": trial,
             "needle_question": needle_info["question"],
             "expected_answer": needle_info["answer"],
+            "needle_type": needle_info.get("type", "baseline"),
             "model_answer": answer,
             "status": status,
             "error_message": error_message,

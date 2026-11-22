@@ -47,6 +47,7 @@ stitched together to build the haystacks. Good sources: public domain books
 Aim for at least ~150K tokens of raw source material so you can build the
 largest haystacks without too much repetition.
 
+Test text sourced from English Wikipedia (CC BY-SA 4.0), fetched with fetch_wikipedia.py.
 ## Running the experiment
 
 ```bash

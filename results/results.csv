@@ -11,3 +11,34 @@ gemini-3.5-flash-lite,10000,50.0,8,Which project is Server Alpha-5 reserved for?
 gemini-3.5-flash-lite,10000,50.0,9,Where do the people who handle the budget meet each week?,Pelican Annex,Pelican Annex,True,1.328,10257,3,OK,,reworded
 gemini-3.5-flash-lite,10000,50.0,10,What name does the depot's night guard give to the bird he looks after?,Bartholomew Quill,Bartholomew Quill,True,1.63,10269,5,OK,,reworded
 gemini-3.5-flash-lite,10000,50.0,11,What nickname did employees give the seasonal dish served at lunch?,Plum Thunder,Plum Thunder,True,3.054,10267,3,OK,,reworded
+gemini-3.5-flash-lite,100000,0.0,0,What is the secret launch code for Project Aurora?,48291,48291,True,4.197,101489,5,OK,,baseline
+gemini-3.5-flash-lite,100000,0.0,1,Which room is the quarterly budget review held in?,Zebra-7,Room Zebra-7,True,3.889,101489,4,OK,,baseline
+gemini-3.5-flash-lite,100000,0.0,2,What was the backup server's root password temporarily set to?,Tangerine-Moose-19,Tangerine-Moose-19,True,2.884,101499,9,OK,,baseline
+gemini-3.5-flash-lite,100000,0.0,3,In which town was the Valmora Accord negotiated?,Quenby-on-Tarn,Quenby-on-Tarn,True,4.075,101504,8,OK,,blended
+gemini-3.5-flash-lite,100000,0.0,4,Who led the Drennick Expedition?,Ostrel Havenmoor,Ostrel Havenmoor,True,5.711,101501,4,OK,,blended
+gemini-3.5-flash-lite,100000,0.0,5,Which company mainly financed the Brightwater Canal?,Marlowe-Dessin,Marlowe-Dessin Trading Company,True,5.356,101497,8,OK,,blended
+gemini-3.5-flash-lite,100000,0.0,6,What is the access code for the east vault?,77215,77215,True,4.891,101519,5,OK,,distractor
+gemini-3.5-flash-lite,100000,0.0,7,Which city did Tomas Ruiz move to?,Dunmoor,Dunmoor,True,7.077,101509,2,OK,,distractor
+gemini-3.5-flash-lite,100000,0.0,8,Which project is Server Alpha-5 reserved for?,Maple-Quartz,Maple-Quartz,True,3.067,101517,3,OK,,distractor
+gemini-3.5-flash-lite,100000,0.0,9,Where do the people who handle the budget meet each week?,Pelican Annex,Pelican Annex,True,11.255,101490,3,OK,,reworded
+gemini-3.5-flash-lite,100000,0.0,10,What name does the depot's night guard give to the bird he looks after?,Bartholomew Quill,Bartholomew Quill,True,4.957,101502,5,OK,,reworded
+gemini-3.5-flash-lite,100000,0.0,11,What nickname did employees give the seasonal dish served at lunch?,Plum Thunder,'Plum Thunder',True,2.571,101500,5,OK,,reworded
+gemini-3.5-flash-lite,100000,50.0,0,What is the secret launch code for Project Aurora?,48291,48291,True,3.896,101489,5,OK,,baseline
+gemini-3.5-flash-lite,100000,50.0,1,Which room is the quarterly budget review held in?,Zebra-7,Room Zebra-7,True,4.246,101489,4,OK,,baseline
+gemini-3.5-flash-lite,100000,50.0,2,What was the backup server's root password temporarily set to?,Tangerine-Moose-19,Tangerine-Moose-19,True,6.867,101499,9,OK,,baseline
+gemini-3.5-flash-lite,100000,50.0,3,In which town was the Valmora Accord negotiated?,Quenby-on-Tarn,Quenby-on-Tarn,True,5.775,101504,8,OK,,blended
+gemini-3.5-flash-lite,100000,50.0,4,Who led the Drennick Expedition?,Ostrel Havenmoor,Ostrel Havenmoor,True,3.152,101501,4,OK,,blended
+gemini-3.5-flash-lite,100000,50.0,5,Which company mainly financed the Brightwater Canal?,Marlowe-Dessin,Marlowe-Dessin Trading Company,True,5.106,101497,8,OK,,blended
+gemini-3.5-flash-lite,100000,50.0,6,What is the access code for the east vault?,77215,77215,True,4.653,101519,5,OK,,distractor
+gemini-3.5-flash-lite,100000,50.0,7,Which city did Tomas Ruiz move to?,Dunmoor,Dunmoor,True,2.762,101509,2,OK,,distractor
+gemini-3.5-flash-lite,100000,50.0,8,Which project is Server Alpha-5 reserved for?,Maple-Quartz,Maple-Quartz,True,4.525,101517,3,OK,,distractor
+gemini-3.5-flash-lite,100000,50.0,9,Where do the people who handle the budget meet each week?,Pelican Annex,Pelican Annex,True,3.101,101490,3,OK,,reworded
+gemini-3.5-flash-lite,100000,50.0,10,What name does the depot's night guard give to the bird he looks after?,Bartholomew Quill,Bartholomew Quill,True,8.284,101502,5,OK,,reworded
+gemini-3.5-flash-lite,100000,50.0,11,What nickname did employees give the seasonal dish served at lunch?,Plum Thunder,Plum Thunder,True,4.542,101500,3,OK,,reworded
+gemini-3.5-flash-lite,100000,100.0,0,What is the secret launch code for Project Aurora?,48291,48291,True,17.835,101489,5,OK,,baseline
+gemini-3.5-flash-lite,100000,100.0,1,Which room is the quarterly budget review held in?,Zebra-7,Room Zebra-7,True,4.893,101489,4,OK,,baseline
+gemini-3.5-flash-lite,100000,100.0,2,What was the backup server's root password temporarily set to?,Tangerine-Moose-19,Tangerine-Moose-19,True,4.539,101499,9,OK,,baseline
+gemini-3.5-flash-lite,100000,100.0,3,In which town was the Valmora Accord negotiated?,Quenby-on-Tarn,Quenby-on-Tarn,True,3.064,101504,8,OK,,blended
+gemini-3.5-flash-lite,100000,100.0,4,Who led the Drennick Expedition?,Ostrel Havenmoor,Ostrel Havenmoor,True,2.677,101501,4,OK,,blended
+gemini-3.5-flash-lite,100000,100.0,5,Which company mainly financed the Brightwater Canal?,Marlowe-Dessin,Marlowe-Dessin Trading Company,True,1.743,101497,8,OK,,blended
+gemini-3.5-flash-lite,100000,100.0,6,What is the access code for the east vault?,77215,77215,True,4.112,101519,5,OK,,distractor

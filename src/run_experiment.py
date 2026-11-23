@@ -65,7 +65,7 @@ RETRYABLE = (
     openai.InternalServerError,
     openai.APIConnectionError,  # also covers timeouts
 )
-WAITS = [5, 15, 30, 60]  # seconds to wait before retry 1, 2, 3, 4
+WAITS = [20, 60, 60, 90]  # longer waits: 100K prompts need a full minute to clear the token limit  
 
 
 def query_with_retry(model, text, question):
@@ -84,7 +84,7 @@ def pause_after(prompt_tokens):
     if prompt_tokens >= 150000:
         time.sleep(60)
     elif prompt_tokens >= 80000:
-        time.sleep(45)
+        time.sleep(60)
     elif prompt_tokens >= 30000:
         time.sleep(15)
     else:

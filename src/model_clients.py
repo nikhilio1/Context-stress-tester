@@ -4,7 +4,11 @@ model_clients.py
 Thin, consistent wrappers around different LLM providers so the rest of the
 codebase can call any of them the same way:
 
-    answer, latency_sec, usage = query_model("gpt-4o", system, user_prompt)
+    answer, latency_sec, usage = query_model("gemini-3.5-flash-lite", document, question)
+
+Every provider function takes an optional api_key. If it is None, the key is
+read from the .env file (command-line use). If it is given, that key is used
+(Streamlit app, where each visitor brings their own key).
 
 Add more providers by writing a new _query_xxx function and registering it
 in MODEL_REGISTRY.
@@ -25,10 +29,10 @@ SYSTEM_PROMPT = (
 )
 
 
-def _query_openai(model: str, document: str, question: str) -> tuple[str, float, dict]:
+def _query_openai(model: str, document: str, question: str, api_key: str | None = None) -> tuple[str, float, dict]:
     from openai import OpenAI
 
-    client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+    client = OpenAI(api_key=api_key or os.environ["OPENAI_API_KEY"])
     user_prompt = f"<document>\n{document}\n</document>\n\nQuestion: {question}"
 
     start = time.time()
@@ -42,7 +46,7 @@ def _query_openai(model: str, document: str, question: str) -> tuple[str, float,
     )
     latency = time.time() - start
 
-    answer = resp.choices[0].message.content.strip()
+    answer = (resp.choices[0].message.content or "").strip()
     usage = {
         "prompt_tokens": resp.usage.prompt_tokens,
         "completion_tokens": resp.usage.completion_tokens,
@@ -50,10 +54,10 @@ def _query_openai(model: str, document: str, question: str) -> tuple[str, float,
     return answer, latency, usage
 
 
-def _query_anthropic(model: str, document: str, question: str) -> tuple[str, float, dict]:
+def _query_anthropic(model: str, document: str, question: str, api_key: str | None = None) -> tuple[str, float, dict]:
     import anthropic
 
-    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    client = anthropic.Anthropic(api_key=api_key or os.environ["ANTHROPIC_API_KEY"])
     user_prompt = f"<document>\n{document}\n</document>\n\nQuestion: {question}"
 
     start = time.time()
@@ -74,12 +78,12 @@ def _query_anthropic(model: str, document: str, question: str) -> tuple[str, flo
     return answer, latency, usage
 
 
-def _query_gemini(model: str, document: str, question: str) -> tuple[str, float, dict]:
+def _query_gemini(model: str, document: str, question: str, api_key: str | None = None) -> tuple[str, float, dict]:
     # Gemini free tier, via its OpenAI-compatible endpoint.
     from openai import OpenAI
 
     client = OpenAI(
-        api_key=os.environ["GEMINI_API_KEY"],
+        api_key=api_key or os.environ["GEMINI_API_KEY"],
         base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
         timeout=60,
         max_retries=0,
@@ -94,11 +98,43 @@ def _query_gemini(model: str, document: str, question: str) -> tuple[str, float,
             {"role": "user", "content": user_prompt},
         ],
         temperature=0,
-        reasoning_effort="low",  # "minimal" is too weak, "high" is too slow
+        reasoning_effort="low",  # "minimal" is rejected (400), "high" is too slow
     )
     latency = time.time() - start
 
-    answer = resp.choices[0].message.content.strip()
+    answer = (resp.choices[0].message.content or "").strip()
+    usage = {
+        "prompt_tokens": resp.usage.prompt_tokens,
+        "completion_tokens": resp.usage.completion_tokens,
+    }
+    return answer, latency, usage
+
+
+def _query_groq(model: str, document: str, question: str, api_key: str | None = None) -> tuple[str, float, dict]:
+    # Groq free tier, via its OpenAI-compatible endpoint.
+    from openai import OpenAI
+
+    client = OpenAI(
+        api_key=api_key or os.environ["GROQ_API_KEY"],
+        base_url="https://api.groq.com/openai/v1",
+        timeout=60,
+        max_retries=0,
+    )
+    user_prompt = f"<document>\n{document}\n</document>\n\nQuestion: {question}"
+
+    start = time.time()
+    resp = client.chat.completions.create(
+        model=model,
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_prompt},
+        ],
+        temperature=0,
+        reasoning_effort="low",
+    )
+    latency = time.time() - start
+
+    answer = (resp.choices[0].message.content or "").strip()
     usage = {
         "prompt_tokens": resp.usage.prompt_tokens,
         "completion_tokens": resp.usage.completion_tokens,
@@ -118,16 +154,24 @@ MODEL_REGISTRY = {
     "claude-sonnet": (_query_anthropic, "claude-sonnet-5"),
     "claude-haiku": (_query_anthropic, "claude-haiku-5-5"),
     "gemini-3.5-flash-lite": (_query_gemini, "gemini-3.5-flash-lite"),
+    "gpt-oss-20b": (_query_groq, "openai/gpt-oss-20b"),
 }
 
 
-def query_model(model_label: str, document: str, question: str) -> tuple[str, float, dict]:
+def query_model(
+    model_label: str,
+    document: str,
+    question: str,
+    api_key: str | None = None,
+) -> tuple[str, float, dict]:
     """
-    Query a registered model by its short label. Returns (answer, latency_seconds, usage_dict).
+    Query a registered model by its short label.
+    Returns (answer, latency_seconds, usage_dict).
+    If api_key is None, the provider's key is read from the .env file.
     """
     if model_label not in MODEL_REGISTRY:
         raise ValueError(
             f"Unknown model '{model_label}'. Available: {list(MODEL_REGISTRY.keys())}"
         )
     fn, api_model_name = MODEL_REGISTRY[model_label]
-    return fn(api_model_name, document, question)
+    return fn(api_model_name, document, question, api_key)

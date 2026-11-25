@@ -13,6 +13,7 @@ Look and feel for the app, with no Streamlit imports so it can be tested alone.
 import html
 
 PAPER, PAPER2, INK, RUST = "#F6F0E4", "#EFE6D2", "#1F1B16", "#B5472A"
+GREEN, FAIL = "#4E7A47", "#8E2A14"   # found = green, request failed = deep red
 
 _CSS = """
 .block-container { max-width: 1100px; padding-top: 2.2rem; }
@@ -20,7 +21,7 @@ footer { visibility: hidden; }
 h1, h2, h3 { font-family: Georgia, "Iowan Old Style", serif; font-weight: 600; letter-spacing: -0.01em; }
 h1 { font-size: 2.1rem; line-height: 1.15; margin-bottom: .2rem; }
 code, pre, [data-testid="stMetricValue"] { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
-[data-testid="stMetcLabel"] { text-transform: uppercase; letter-spacing: .06em; font-size: .72rem; opacity: .7; }
+[data-testid="stMetricLabel"] { text-transform: uppercase; letter-spacing: .06em; font-size: .72rem; opacity: .7; }
 [data-testid="stSidebar"] { border-right: 1px solid rgba(31,27,22,.35); }
 .stButton > button { border-radius: 2px; border: 1px solid __INK__; }
 .stButton > button[kind="primary"], button[data-testid="stBaseButton-primary"] {
@@ -42,23 +43,46 @@ hr { border-top: 1px solid __INK__; opacity: .3; }
                 background: rgba(181,71,42,.14); border-right: 2px solid __RUST__;
                 animation: strip-sweep 2.4s linear infinite; }
 @keyframes strip-sweep { from { left: -9%; } to { left: 100%; } }
-.strip .mk { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px dashed __RUST__; }
-.strip .mk.found { border-left: 3px solid __RUST__; }
-.strip .mk.missed { border-left: 3px solid __INK__; }
-.strip .mk.error { border-left: 2px dotted __INK__; }
+.strip .mk { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px dashed __INK__; }
+.strip .mk.found { border-left: 3px solid __GREEN__; }
+.strip .mk.missed { border-left: 3px solid __RUST__; }
+.strip .mk.error { border-left: 3px dotted __FAIL__; }
 .strip .mk-label { position: absolute; top: 4px; left: 6px; padding: 0 4px; background: __PAPER__;
                    font: 11px ui-monospace, "Cascadia Mono", Consolas, monospace; color: __INK__; white-space: nowrap; }
 .strip .mk.r .mk-label { left: auto; right: 6px; }
 .strip .mk-label:empty { display: none; }
-.strip .mk.found .mk-label::after { content: " found"; color: __RUST__; }
-.strip .mk.missed .mk-label::after { content: " missed"; }
-.strip .mk.error .mk-label::after { content: " error"; }
+.strip .mk.found .mk-label::after { content: " found"; color: __GREEN__; }
+.strip .mk.missed .mk-label::after { content: " missed"; color: __RUST__; }
+.strip .mk.error .mk-label::after { content: " failed"; color: __FAIL__; }
 .strip-cap { font: 12px ui-monospace, "Cascadia Mono", Consolas, monospace; opacity: .7; margin-bottom: .6rem; }
+
+.stApp { background-image: radial-gradient(rgba(31,27,22,.11) 1px, transparent 1px); background-size: 24px 24px; }
+.fail { border-left: 4px solid __FAIL__; background: rgba(142,42,20,.07); padding: .55rem .9rem; margin: .4rem 0 1rem 0; }
+.fail b { color: __FAIL__; }
+.fail ul { margin: .3rem 0 .2rem 1.1rem; padding: 0; }
+.fail .why { opacity: .75; font-size: .9rem; }
+.vt { width: 100%; border-collapse: collapse; font-size: .95rem; margin: .4rem 0 .8rem 0; }
+.vt th { text-align: left; font: 11px ui-monospace, Consolas, monospace; letter-spacing: .08em; text-transform: uppercase;
+         opacity: .65; border-bottom: 1px solid __INK__; padding: 4px 8px; }
+.vt td { padding: 6px 8px; border-bottom: 1px solid rgba(31,27,22,.2); vertical-align: top; }
+.vt .v { font: 700 13px ui-monospace, Consolas, monospace; white-space: nowrap; }
+.vt .v.ok { color: __GREEN__; } .vt .v.miss { color: __RUST__; } .vt .v.fail { color: __FAIL__; }
+.steps { display: flex; gap: 2.2rem; margin: .8rem 0 .4rem 0; flex-wrap: wrap; }
+.steps > div { flex: 1 1 200px; border-top: 2px solid __INK__; padding-top: .5rem; }
+.steps .n { font: 12px ui-monospace, Consolas, monospace; color: __RUST__; letter-spacing: .08em; }
+.steps .t { font-family: Georgia, serif; font-size: 1.15rem; font-weight: 600; margin: .1rem 0; }
+.steps .d { font-size: .95rem; opacity: .78; }
+.stats { display: flex; gap: 2.4rem; flex-wrap: wrap; margin: 1rem 0 .4rem 0; padding: .7rem 0;
+         border-top: 1px solid rgba(31,27,22,.35); border-bottom: 1px solid rgba(31,27,22,.35); }
+.stats .num { font: 600 1.7rem ui-monospace, Consolas, monospace; line-height: 1.1; }
+.stats .lab { font: 11px ui-monospace, Consolas, monospace; letter-spacing: .08em; text-transform: uppercase; opacity: .65; }
+@media (max-width: 600px) { .strip .mk.found .mk-label::after, .strip .mk.missed .mk-label::after, .strip .mk.error .mk-label::after { content: ""; } }
 @media (prefers-reduced-motion: reduce) { .strip .sweep { animation: none; left: 0; } }
 """
 
 CSS = (_CSS.replace("__INK__", INK).replace("__PAPER2__", PAPER2)
-       .replace("__PAPER__", PAPER).replace("__RUST__", RUST))
+       .replace("__PAPER__", PAPER).replace("__RUST__", RUST)
+       .replace("__GREEN__", GREEN).replace("__FAIL__", FAIL))
 
 
 def _tick_heights(n=110):
